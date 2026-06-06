@@ -1,0 +1,347 @@
+/* =======================
+   General Styling
+   ======================= */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #fff0eb;
+    transition: background 0.3s;
+}
+
+.leaflet-container {
+    background-color: #fdf5f0;
+    border-radius: 22px;
+    box-shadow: 0 12px 45px rgba(0,0,0,0.25);
+    transition: all 0.4s;
+}
+
+/* =======================
+   Map Popups
+   ======================= */
+.leaflet-popup-content {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(145deg, #fff7f0, #ffe3d1);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 14px 35px rgba(0,0,0,0.4);
+    transition: all 0.4s ease;
+}
+
+.leaflet-popup-content h3 {
+    color: #d9534f;
+    font-weight: 700;
+    margin-bottom: 12px;
+    font-size: 19px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.leaflet-popup-content p {
+    margin: 6px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.leaflet-popup-content img {
+    max-width: 260px;
+    border-radius: 16px;
+    margin-top: 12px;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.leaflet-popup-content img:hover {
+    transform: scale(1.08);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+}
+
+.leaflet-popup-tip {
+    background: #ffe3d1;
+}
+
+/* =======================
+   Marker Cluster
+   ======================= */
+.marker-cluster-small { background-color: rgba(235, 87, 87, 0.85); }
+.marker-cluster-medium { background-color: rgba(255, 193, 7, 0.88); }
+.marker-cluster-large { background-color: rgba(220, 53, 69, 0.92); }
+
+.marker-cluster div {
+    border-radius: 50%;
+    border: 3px solid white;
+    color: #fff;
+    font-size: 17px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 50px;
+    transition: all 0.4s ease;
+}
+
+.marker-cluster div:hover {
+    transform: scale(1.35);
+    box-shadow: 0 0 28px rgba(0,0,0,0.55);
+}
+
+/* =======================
+   Marker Styling
+   ======================= */
+.leaflet-marker-icon {
+    transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+.leaflet-marker-icon:hover {
+    transform: scale(1.6) rotate(-5deg);
+    filter: drop-shadow(0 0 18px rgba(0,0,0,0.5));
+    z-index: 1000;
+}
+
+/* =======================
+   Tooltip Styling
+   ======================= */
+.leaflet-tooltip {
+    background-color: rgba(183,28,28,0.95);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 6px 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.45);
+}
+
+/* =======================
+   Controls Styling
+   ======================= */
+.leaflet-control-zoom,
+.leaflet-control-layers,
+.leaflet-control-attribution {
+    background-color: #fff0eb;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    transition: all 0.25s ease-in-out;
+}
+
+.leaflet-control-zoom:hover,
+.leaflet-control-layers:hover,
+.leaflet-control-attribution:hover {
+    transform: scale(1.08);
+}
+
+/* =======================
+   Sidebar Styling
+   ======================= */
+#sidebar {
+    background: linear-gradient(180deg, #fff7f0, #ffe3d1);
+    padding: 28px;
+    border-radius: 25px;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+    font-size: 15px;
+    transition: all 0.5s ease;
+    overflow-y: auto;
+}
+
+#sidebar h4 {
+    font-weight: 700;
+    color: #d9534f;
+    margin-bottom: 20px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+#sidebar input, #sidebar select, #sidebar input[type=range] {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 1px solid #d9534f;
+    background: #fff0eb;
+    margin-bottom: 16px;
+    transition: all 0.3s ease-in-out;
+}
+
+#sidebar input:focus, #sidebar select:focus {
+    border-color: #b71c1c;
+    box-shadow: 0 0 14px rgba(183,28,28,0.5);
+    outline: none;
+}
+
+#sidebar ul li {
+    background: #ffe3d1;
+    padding: 16px;
+    margin-bottom: 14px;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.42);
+    transition: all 0.4s ease-in-out;
+}
+
+#sidebar ul li:hover {
+    background: #d9534f;
+    color: #fff;
+    transform: translateX(10px) scale(1.04);
+}
+
+/* =======================
+   Hotel Card Styling
+   ======================= */
+.hotel-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff0eb;
+    padding: 20px;
+    border-radius: 22px;
+    box-shadow: 0 16px 45px rgba(0,0,0,0.45);
+    margin-bottom: 20px;
+    transition: all 0.45s ease-in-out;
+}
+
+.hotel-card:hover {
+    transform: translateY(-7px) scale(1.04);
+    box-shadow: 0 20px 55px rgba(0,0,0,0.5);
+}
+
+.hotel-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 18px;
+    margin-bottom: 14px;
+    transition: all 0.35s ease;
+}
+
+.hotel-card img:hover {
+    transform: scale(1.07);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.42);
+}
+
+.hotel-card h3 {
+    margin: 0;
+    font-size: 19px;
+    color: #d9534f;
+}
+
+.hotel-card p {
+    margin: 5px 0;
+    font-size: 15px;
+    color: #555;
+}
+
+.hotel-card button {
+    padding: 10px 18px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    margin-top: 10px;
+    transition: all 0.35s ease-in-out;
+}
+
+.btn-detail {
+    background: linear-gradient(135deg,#d9534f,#ff6b6b);
+    color:white;
+}
+
+.btn-detail:hover {
+    transform: scale(1.06);
+    opacity:0.92;
+}
+
+.btn-location {
+    background: linear-gradient(135deg,#ffe3d1,#ffd1c1);
+    color:#b71c1c;
+}
+
+.btn-location:hover {
+    transform: scale(1.06);
+    opacity:0.92;
+}
+
+/* =======================
+   Modal Hotel Detail
+   ======================= */
+#hotelModal {
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.7);
+    justify-content:center; align-items:center;
+    z-index:2000;
+    transition: all 0.35s ease-in-out;
+}
+
+#hotelModalContent {
+    background:#fff2e8;
+    border-radius:25px;
+    padding:35px;
+    max-width:500px;
+    width:90%;
+    box-shadow:0 18px 55px rgba(0,0,0,0.55);
+    transition: all 0.35s ease-in-out;
+}
+
+#hotelModalContent img {
+    width:100%;
+    border-radius:18px;
+    margin-bottom:18px;
+}
+
+#hotelModalContent h3 {
+    color:#b71c1c;
+    margin-bottom:12px;
+    font-size:20px;
+}
+
+#hotelModalContent p {
+    margin:6px 0;
+    font-size:15px;
+    color:#555;
+}
+
+#hotelModalContent button {
+    margin-top:15px;
+    background:#d9534f;
+    color:white;
+    padding:10px 18px;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    font-weight:700;
+    transition: all 0.35s ease-in-out;
+}
+
+#hotelModalContent button:hover {
+    transform: scale(1.05);
+    opacity:0.9;
+}
+
+/* =======================
+   Statistics Box
+   ======================= */
+#stats {
+    background: linear-gradient(135deg,#ff6b6b,#ffe3d1);
+    padding:22px;
+    border-radius:22px;
+    box-shadow:0 18px 55px rgba(0,0,0,0.45);
+    color:#fff;
+    font-weight:700;
+    position:absolute;
+    bottom:25px;
+    left:25px;
+    z-index:1500;
+}
+
+#stats h4 { margin-bottom:14px; font-size:16px; }
+#stats p { margin:6px 0; font-size:15px; }
+
+/* =======================
+   Responsive tweaks
+   ======================= */
+@media screen and (max-width:1280px){ #sidebar{width:280px; padding:20px;} .hotel-card{padding:16px;} }
+@media screen and (max-width:1024px){ #sidebar{width:240px; padding:18px;} .hotel-card{padding:14px;} }
+@media screen and (max-width:768px){
+    #container{flex-direction:column;}
+    #map{flex:1;height:45vh;}
+    #sidebar{flex:1; max-width:100%; margin-top:12px; padding:16px;}
+    .hotel-card button{width:100%; margin-bottom:8px;}
+    #hotelModalContent{max-width:95%; padding:20px;}
+    #stats{bottom:12px; left:12px; right:12px; font-size:14px; padding:16px;}
+}
