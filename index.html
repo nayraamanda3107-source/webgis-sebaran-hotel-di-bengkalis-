@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Sebaran Hotel Premium Bengkalis</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="css/leaflet.css"/>
+<link rel="stylesheet" href="css/MarkerCluster.css"/>
+<link rel="stylesheet" href="css/MarkerCluster.Default.css"/>
+<link rel="stylesheet" href="css/custom.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ===== General Body ===== */
+body, html { margin:0; padding:0; height:100%; font-family:'Poppins',sans-serif; background:#fff2e8; }
+#header { width:100%; padding:15px 25px; background: linear-gradient(135deg,#b71c1c,#ff6b6b); color:white; font-size:20px; font-weight:700; text-align:center; box-shadow:0 5px 25px rgba(0,0,0,0.4); z-index:2000; position:fixed; top:0; left:0; }
+#container { display:flex; flex-direction:row; height:calc(100% - 60px); margin-top:60px; transition: all 0.3s; }
+
+/* Map kiri */
+#map { flex:2; min-height:300px; border-radius:20px; margin:10px; transition: all 0.3s; }
+
+/* Sidebar kanan */
+#sidebar {
+    flex:1; max-width:400px;
+    background: linear-gradient(180deg,#fff7f0,#ffe3d1);
+    padding:25px;
+    overflow-y:auto;
+    box-shadow:-5px 0 25px rgba(0,0,0,0.35);
+    border-radius:20px;
+    transition: all 0.4s;
+}
+#sidebar h2 { color:#b71c1c; font-weight:700; margin-bottom:12px; font-size:20px; }
+#sidebar input, #sidebar select, #sidebar input[type=range] { width:100%; padding:10px 14px; margin-bottom:14px; border-radius:10px; border:1px solid #b71c1c; }
+
+/* Kartu hotel */
+.hotel-card {
+    background:#fff;
+    border-radius:18px;
+    box-shadow:0 8px 28px rgba(0,0,0,0.35);
+    margin-bottom:16px;
+    padding:18px;
+    transition: all 0.4s;
+}
+.hotel-card:hover { transform: translateY(-6px) scale(1.03); box-shadow:0 12px 40px rgba(0,0,0,0.45);}
+.hotel-card img { width:100%; border-radius:12px; margin-bottom:10px; transition: all 0.3s; }
+.hotel-card img:hover { transform: scale(1.05); box-shadow:0 10px 30px rgba(0,0,0,0.35); }
+.hotel-card h3 { margin:0 0 5px; color:#b71c1c; font-size:18px; }
+.hotel-card p { margin:3px 0; font-size:14px; color:#555; }
+.hotel-card button {
+    padding:10px 16px; border:none; border-radius:10px; cursor:pointer; font-weight:700; margin-top:8px; transition: all 0.3s;
+}
+.btn-detail { background:linear-gradient(135deg,#b71c1c,#ff6b6b); color:white; }
+.btn-detail:hover { transform:scale(1.06); opacity:0.9; }
+.btn-location, .btn-google { background:linear-gradient(135deg,#ffe3d1,#ffd1c1); color:#b71c1c; }
+.btn-location:hover, .btn-google:hover { transform:scale(1.06); opacity:0.9; }
+
+/* Modal Hotel Detail */
+#hotelModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.65); justify-content:center; align-items:center; z-index:2000; }
+#hotelModalContent { background:#fff2e8; border-radius:25px; padding:30px; max-width:500px; width:90%; box-shadow:0 15px 55px rgba(0,0,0,0.5); }
+#hotelModalContent img { width:100%; border-radius:18px; margin-bottom:15px; }
+#hotelModalContent h3 { color:#b71c1c; margin-bottom:12px; font-size:20px; }
+#hotelModalContent p { margin:6px 0; font-size:15px; color:#555; }
+#hotelModalContent button { margin-top:15px; background:#b71c1c; color:white; padding:10px 18px; border:none; border-radius:14px; cursor:pointer; font-weight:700; transition: all 0.3s; }
+#hotelModalContent button:hover { transform:scale(1.05); opacity:0.9; }
+
+/* Statistik floating */
+#stats { background:linear-gradient(135deg,#ff6b6b,#ffe3d1); padding:22px; border-radius:22px; box-shadow:0 18px 55px rgba(0,0,0,0.45); color:#fff; font-weight:700; position:absolute; bottom:25px; left:25px; z-index:1500; }
+#stats h4 { margin-bottom:14px; font-size:16px; }
+#stats p { margin:6px 0; font-size:15px; }
+
+/* ===== Responsive ===== */
+@media screen and (max-width:1024px){ #sidebar{max-width:280px; padding:18px;} .hotel-card{padding:14px;} }
+@media screen and (max-width:768px){
+    #container{flex-direction:column;}
+    #map{flex:1;height:50vh;margin:10px;}
+    #sidebar{flex:1;max-width:100%;margin-top:10px;padding:16px;}
+    .hotel-card button{width:100%; margin-bottom:6px;}
+    #hotelModalContent{max-width:95%; padding:20px;}
+    #stats{bottom:10px; left:10px; right:10px; font-size:13px; padding:12px;}
+}
+</style>
+</head>
+<body>
+
+<div id="header">Sebaran Hotel Premium Bengkalis</div>
+<div id="container">
+    <div id="map"></div>
+    <div id="sidebar">
+        <h2>Filter Hotel</h2>
+        <p>Filter berdasarkan harga, rating, kategori</p>
+        <input type="text" id="searchHotel" placeholder="Cari hotel...">
+        <select id="filterCategory">
+            <option value="all">Semua Kategori</option>
+            <option value="premium">Premium</option>
+            <option value="syariah">Syariah</option>
+            <option value="budget">Budget</option>
+        </select>
+        <label>Harga Max: <span id="priceValue">Rp 1.000.000</span></label>
+        <input type="range" id="filterPrice" min="200000" max="1000000" step="50000" value="1000000">
+        <label>Rating Min: <span id="ratingValue">3</span></label>
+        <input type="range" id="filterRating" min="3" max="5" step="1" value="3">
+        <div id="hotelList"></div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="hotelModal">
+    <div id="hotelModalContent">
+        <button onclick="closeHotelModal()">Tutup</button>
+        <div id="hotelModalBody"></div>
+    </div>
+</div>
+
+<div id="stats">
+    <h4>Statistik Hotel</h4>
+    <p>Total: <span id="totalHotels">0</span></p>
+    <p>Premium: <span id="premiumCount">0</span></p>
+    <p>Syariah: <span id="syariahCount">0</span></p>
+    <p>Budget: <span id="budgetCount">0</span></p>
+</div>
+
+<script src="js/leaflet.js"></script>
+<script src="js/leaflet.markercluster.js"></script>
+<script src="js/hotel_bengkalis_fix_8.js"></script>
+<script src="js/hotelPhotos.js"></script> <!-- File berisi URL foto hotel -->
+
+<script>
+// ==== Map Setup
+var map = L.map('map').setView([1.4812,102.1123],14);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19, attribution:'© OpenStreetMap'}).addTo(map);
+
+var hotelCluster = L.markerClusterGroup();
+var hotelMarkers = [];
+var hotelList = document.getElementById('hotelList');
+
+function getRandomCategory(){ const cats=["premium","syariah","budget"]; return cats[Math.floor(Math.random()*3)]; }
+function getRandomRating(){ return Math.floor(Math.random()*3)+3; }
+function getRandomPrice(){ return Math.floor(Math.random()*800000)+200000; }
+
+// ==== Modal
+function showHotelModal(hotel){
+    var lat = hotel.properties.Latitude;
+    var lon = hotel.properties.Longitude;
+    var googleUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+
+    document.getElementById('hotelModal').style.display='flex';
+    document.getElementById('hotelModalBody').innerHTML = `
+        <h3>${hotel.properties["Nama Hotel"]}</h3>
+        <img src="${hotel.properties.Thumbnail}">
+        <p><b>Alamat:</b> ${hotel.properties.Alamat}</p>
+        <p><b>Bintang:</b> ${hotel.properties.Rating} ⭐</p>
+        <p><b>Harga:</b> Rp ${hotel.properties.Harga.toLocaleString()}</p>
+        <p><b>Kategori:</b> ${hotel.properties.Kategori}</p>
+        <button onclick="window.open('${googleUrl}', '_blank')" class="btn-google">Buka Google Maps</button>
+    `;
+}
+function closeHotelModal(){ document.getElementById('hotelModal').style.display='none'; }
+
+// ==== Add Markers & Sidebar List
+json_hotel_bengkalis_fix_8.features.forEach(function(feature){
+    var lat=feature.properties.Latitude;
+    var lon=feature.properties.Longitude;
+    var nama=feature.properties["Nama Hotel"];
+    var alamat=feature.properties["Alamat"];
+    var category=getRandomCategory();
+    var rating=getRandomRating();
+    var price=getRandomPrice();
+
+    feature.properties.Kategori=category;
+    feature.properties.Rating=rating;
+    feature.properties.Harga=price;
+
+    // Gunakan URL foto dari hotelPhotos.js
+    feature.properties.Thumbnail = hotelPhotos[nama] || "https://via.placeholder.com/300x140?text=Hotel";
+
+    var marker=L.marker([lat,lon],{title:nama}).bindPopup(
+        `<div class="hotel-popup">
+            <h3>${nama}</h3>
+            <img src="${feature.properties.Thumbnail}">
+            <p>${alamat}</p>
+            <p>Bintang: ${rating}⭐</p>
+            <p>Harga: Rp ${price.toLocaleString()}</p>
+            <p>Kategori: ${category}</p>
+        </div>`
+    );
+    hotelCluster.addLayer(marker);
+    hotelMarkers.push({marker:marker,nama:nama.toLowerCase(),category:category,rating:rating,price:price,feature:feature});
+});
+
+map.addLayer(hotelCluster);
+hotelCluster.eachLayer(function(layer){
+    layer.bindTooltip(layer.getPopup().getContent().match(/<h3>(.*?)<\/h3>/)[1],{permanent:true,direction:'top',className:'hotel-tooltip'});
+});
+
+// ==== Render Sidebar List & Stats
+function renderList(){
+    var query=document.getElementById('searchHotel').value.toLowerCase();
+    var category=document.getElementById('filterCategory').value;
+    var maxPrice=parseInt(document.getElementById('filterPrice').value);
+    var minRating=parseInt(document.getElementById('filterRating').value);
+
+    document.getElementById('priceValue').textContent="Rp "+maxPrice.toLocaleString();
+    document.getElementById('ratingValue').textContent=minRating;
+
+    hotelList.innerHTML="";
+    var total=0, premium=0, syariah=0, budget=0;
+
+    hotelMarkers.forEach(function(obj){
+        if(obj.nama.includes(query) && (category==="all" || obj.category===category) && obj.price<=maxPrice && obj.rating>=minRating){
+            total++;
+            if(obj.category==="premium") premium++;
+            if(obj.category==="syariah") syariah++;
+            if(obj.category==="budget") budget++;
+
+            var lat = obj.feature.properties.Latitude;
+            var lon = obj.feature.properties.Longitude;
+            var googleUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+
+            var card=document.createElement('div');
+            card.className="hotel-card";
+            card.innerHTML=`<img src="${obj.feature.properties.Thumbnail}">
+                <h3>${obj.feature.properties["Nama Hotel"]}</h3>
+                <p>${obj.feature.properties.Alamat}</p>
+                <p>Bintang: ${obj.feature.properties.Rating}⭐ | Rp ${obj.feature.properties.Harga.toLocaleString()} | ${obj.feature.properties.Kategori}</p>
+                <button class="btn-detail">Lihat Detail</button>
+                <button class="btn-location" onclick="map.setView([${lat},${lon}],18); obj.marker.openPopup();">Cek Lokasi</button>
+                <button class="btn-google" onclick="window.open('${googleUrl}','_blank')">Google Maps</button>`;
+            hotelList.appendChild(card);
+
+            // Event tombol detail
+            card.querySelector('.btn-detail').addEventListener('click',function(){ showHotelModal(obj.feature); });
+
+            // Hover sidebar highlight marker
+            card.addEventListener('mouseover',function(){ obj.marker.openPopup(); });
+        }
+    });
+
+    document.getElementById('totalHotels').textContent=total;
+    document.getElementById('premiumCount').textContent=premium;
+    document.getElementById('syariahCount').textContent=syariah;
+    document.getElementById('budgetCount').textContent=budget;
+}
+
+// Event listeners
+document.getElementById('searchHotel').addEventListener('input',renderList);
+document.getElementById('filterCategory').addEventListener('change',renderList);
+document.getElementById('filterPrice').addEventListener('input',renderList);
+document.getElementById('filterRating').addEventListener('input',renderList);
+
+renderList();
+</script>
+</body>
+</html>
